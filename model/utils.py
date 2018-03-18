@@ -60,9 +60,7 @@ def discriminator(x, x_batch, x_size, model, layers, hidden_dim, leaky_rate=0.01
 	if model == 'dnn':
 		with tf.variable_scope('discriminator', reuse=tf.AUTO_REUSE):
 			if condition is not None:
-				x = tf.reshape(x, (-1, x_size, x_size, 1))
-				x = tf.concat([x, condition], axis=3)
-				x = tf.reshape(x, (x_batch, -1))
+				x = tf.concat([x, condition[:, 0, 0, :]], axis=1)
 			for l in range(layers):
 				x = tf.layers.dense(inputs = x, units = hidden_dim[l], use_bias = True)
 				x = tf.nn.leaky_relu(x, leaky_rate)
@@ -154,5 +152,3 @@ def get_mnist_condition(batch_size, labels):
 	ans = np.zeros([batch_size, 28, 28, 10])
 	ans[np.arange(batch_size), :, :, labels] = 1
 	return ans
-
-
